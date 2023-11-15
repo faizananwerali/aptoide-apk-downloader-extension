@@ -32,3 +32,4 @@ runs:
       with:
         extensionDir: ${{ env.EXTENSION_DIR }}
         zipFilePath: ${{ env.ZIP_FILE_PATH }}
+
