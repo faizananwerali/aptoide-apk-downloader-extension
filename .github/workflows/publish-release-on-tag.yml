@@ -36,7 +36,7 @@ jobs:
         uses: ncipollo/release-action@58ae73b360456532aafd58ee170c045abbeaee37 # pin@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          draft: 'true'
+          draft: 'false'
 
       - name: Upload zip asset to the release
         if: steps.getRelease.outcome != 'success'
