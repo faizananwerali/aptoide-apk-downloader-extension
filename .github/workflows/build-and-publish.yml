@@ -58,4 +58,3 @@ jobs:
           asset_path: ./build/extension.crx  # Replace with your CRX file path
           asset_name: extension-${{ steps.get_version.outputs.version }}.crx
           asset_content_type: application/octet-stream  # Adjust content type if needed
-  P
