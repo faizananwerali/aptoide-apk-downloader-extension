@@ -1,0 +1,61 @@
+name: Build and Publish
+on:
+  push:
+    branches:
+      - 'master'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # pack zip and read manifest, can be reused in the following steps
+      - id: packExtensionDir
+        uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
+        with:
+          extensionDir: 'extension'
+          zipFilePath: 'build/extension.zip'
+
+      - uses: cardinalby/webext-buildtools-chrome-crx-action@v2
+        with:
+          # zip file made at the packExtensionDir step
+          zipFilePath: 'build/extension.zip'
+          crxFilePath: 'build/extension.crx'
+          privateKey: ${{ secrets.CHROME_CRX_PRIVATE_KEY }}
+
+      # Get version from manifest file (replace with your file name and parsing)
+      - name: Get version from manifest
+        id: get_version
+        run: |
+          VERSION=$(grep -o '"version": *"[^"]*"' ./extension/manifest.json | grep -o '"[^"]*"$' | tr -d '"')
+          echo "::set-output name=version::$VERSION"
+
+      # Create a release with the version from the manifest
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: Release ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
+
+      # Upload assets (ZIP and CRX) to the release
+      - name: Upload assets
+        id: upload_assets
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/extension.zip  # Replace with your ZIP file path
+          asset_name: extension-${{ steps.get_version.outputs.version }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload CRX file
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/extension.crx  # Replace with your CRX file path
+          asset_name: extension-${{ steps.get_version.outputs.version }}.crx
+          asset_content_type: application/octet-stream  # Adjust content type if needed
+  P
