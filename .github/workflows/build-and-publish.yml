@@ -40,6 +40,8 @@ jobs:
           release_name: Release ${{ steps.get_version.outputs.version }}
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOWS_TOKEN }}  # Use the secret here
 
       # Upload assets (ZIP and CRX) to the release
       - name: Upload assets
