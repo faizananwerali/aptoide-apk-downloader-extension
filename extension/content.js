@@ -1,6 +1,59 @@
-// Function to make GET request using Fetch API
-async function fetchData(url) {
-    const response = await fetch(url);
+async function fetchData(appId) {
+    // https://webservices.aptoide.com/webservices/3/getApkInfo/id:66444852/json
+    const response = await fetch(`https://webservices.aptoide.com/webservices/3/getApkInfo/id:${appId}/json`);
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error('Network response was not ok.');
+    }
+}
+
+async function fetchDataAlternative(appId) {
+    const myHeaders = new Headers();
+    myHeaders.append("User-Agent", "Android");
+
+    const formData = new FormData();
+    formData.append("identif", "id:" + appId);
+    formData.append("mode", "json");
+
+    const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formData,
+        redirect: 'follow'
+    };
+
+    const response = await fetch("https://webservices.aptoide.com/webservices/3/getApkInfo", requestOptions)
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error('Network response was not ok.');
+    }
+}
+
+async function fetchDataAlternative2(appId) {
+    // https://ws75.aptoide.com/api/7/app/getMeta?app_id=66444852
+    const response = await fetch(`https://ws75.aptoide.com/api/7/app/getMeta?app_id=${appId}`);
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error('Network response was not ok.');
+    }
+}
+
+async function searchApp(pkg) {
+    // https://web-api-cache.aptoide.com/search?query=com.facebook.katana
+    const response = await fetch(`https://web-api-cache.aptoide.com/search?query=${pkg}`);
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error('Network response was not ok.');
+    }
+}
+
+async function searchAppAlternative(pkg) {
+    // https://ws75.aptoide.com/api/7/apps/search?query=com.facebook.katana
+    const response = await fetch(`https://ws75.aptoide.com/api/7/apps/search?query=${pkg}`);
     if (response.ok) {
         return response.json();
     } else {
@@ -22,7 +75,6 @@ function setAnchor(anchor, apkInfo) {
     `;
 }
 
- // https://calculator-panatech-apps.en.aptoide.com/app
 // Function to modify anchor elements
 function modifyAnchors() {
     const anchors = document.querySelectorAll('a[href^="https://en.aptoide.com/download?app_id="]');
@@ -41,7 +93,7 @@ function modifyAnchors() {
                     setAnchor(anchor, apk);
                 } else {
                     fetchPromises.push(
-                        fetchData(`https://webservices.aptoide.com/webservices/2/getApkInfo/id:${appId}/json`)
+                        fetchData(appId)
                             .then((responseData) => {
                                 // Cache the response
                                 sessionStorage.setItem('aptoide-apk-downloader-extension-' + appId, JSON.stringify(responseData));
