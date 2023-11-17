@@ -1,5 +1,12 @@
+/**
+ * GET request
+ *
+ * Sample URL: https://webservices.aptoide.com/webservices/3/getApkInfo/id:66444852/json
+ *
+ * @param appId
+ * @returns {Promise<any>}
+ */
 async function fetchData(appId) {
-    // https://webservices.aptoide.com/webservices/3/getApkInfo/id:66444852/json
     const response = await fetch(`https://webservices.aptoide.com/webservices/3/getApkInfo/id:${appId}/json`);
     if (response.ok) {
         return response.json();
@@ -8,6 +15,12 @@ async function fetchData(appId) {
     }
 }
 
+/**
+ * POST request
+ *
+ * @param appId
+ * @returns {Promise<any>}
+ */
 async function fetchDataAlternative(appId) {
     const myHeaders = new Headers();
     myHeaders.append("User-Agent", "Android");
@@ -31,9 +44,18 @@ async function fetchDataAlternative(appId) {
     }
 }
 
+/**
+ *
+ * Info regarding this API.
+ * https://ws2.aptoide.com/api/7/app/getMeta?info=1
+ *
+ * Sample URL: https://ws2.aptoide.com/api/7/app/getMeta?app_id=66444852
+ *
+ * @param appId
+ * @returns {Promise<any>}
+ */
 async function fetchDataAlternative2(appId) {
-    // https://ws75.aptoide.com/api/7/app/getMeta?app_id=66444852
-    const response = await fetch(`https://ws75.aptoide.com/api/7/app/getMeta?app_id=${appId}`);
+    const response = await fetch(`https://ws2.aptoide.com/api/7/app/getMeta?app_id=${appId}`);
     if (response.ok) {
         return response.json();
     } else {
@@ -41,8 +63,13 @@ async function fetchDataAlternative2(appId) {
     }
 }
 
+/**
+ * Sample URL: https://web-api-cache.aptoide.com/search?query=com.facebook.katana
+ *
+ * @param pkg
+ * @returns {Promise<any>}
+ */
 async function searchApp(pkg) {
-    // https://web-api-cache.aptoide.com/search?query=com.facebook.katana
     const response = await fetch(`https://web-api-cache.aptoide.com/search?query=${pkg}`);
     if (response.ok) {
         return response.json();
@@ -51,8 +78,16 @@ async function searchApp(pkg) {
     }
 }
 
+/**
+ * Info regarding this API.
+ * https://ws75.aptoide.com/api/7/apps/search?info=1
+ *
+ * Sample URL: https://ws75.aptoide.com/api/7/apps/search?query=com.facebook.katana
+ *
+ * @param pkg
+ * @returns {Promise<any>}
+ */
 async function searchAppAlternative(pkg) {
-    // https://ws75.aptoide.com/api/7/apps/search?query=com.facebook.katana
     const response = await fetch(`https://ws75.aptoide.com/api/7/apps/search?query=${pkg}`);
     if (response.ok) {
         return response.json();
@@ -61,6 +96,12 @@ async function searchAppAlternative(pkg) {
     }
 }
 
+/**
+ * Replaces the anchor element with a download buttons.
+ *
+ * @param anchor
+ * @param apkInfo
+ */
 // Set anchor
 function setAnchor(anchor, apkInfo) {
     anchor.parentElement.innerHTML = `
@@ -75,40 +116,48 @@ function setAnchor(anchor, apkInfo) {
     `;
 }
 
-// Function to modify anchor elements
+/**
+ * Fetches data for each anchor element and replaces it with a download button.
+ */
 function modifyAnchors() {
     const anchors = document.querySelectorAll('a[href^="https://en.aptoide.com/download?app_id="]');
     const fetchPromises = [];
 
     anchors.forEach((anchor) => {
+        let url, appId;
         try {
-            const url = new URL(anchor.href);
-            const appId = url.searchParams.get('app_id');
-
-            if (appId) {
-                // Check if data is already cached
-                const cachedData = sessionStorage.getItem('aptoide-apk-downloader-extension-' + appId);
-                if (cachedData) {
-                    const { apk } = JSON.parse(cachedData);
-                    setAnchor(anchor, apk);
-                } else {
-                    fetchPromises.push(
-                        fetchData(appId)
-                            .then((responseData) => {
-                                // Cache the response
-                                sessionStorage.setItem('aptoide-apk-downloader-extension-' + appId, JSON.stringify(responseData));
-                                const { apk } = responseData;
-                                setAnchor(anchor, apk);
-                            })
-                            .catch((error) => {
-                                console.error('Error fetching data:', error);
-                            })
-                    );
-                }
-            }
+            url = new URL(anchor.href);
+            appId = url.searchParams.get('app_id');
         } catch (error) {
             console.error('Error parsing URL:', error);
+            return;
         }
+
+        if (appId === undefined || appId == null || appId === '') {
+            console.error('App ID is undefined, null or empty.');
+            return;
+        }
+
+        // Check if data is already cached
+        const cachedData = sessionStorage.getItem('aptoide-apk-downloader-extension-' + appId);
+        if (cachedData) {
+            const { apk } = JSON.parse(cachedData);
+            setAnchor(anchor, apk);
+            return;
+        }
+
+        fetchPromises.push(
+            fetchData(appId)
+                .then((responseData) => {
+                    // Cache the response
+                    sessionStorage.setItem('aptoide-apk-downloader-extension-' + appId, JSON.stringify(responseData));
+                    const { apk } = responseData;
+                    setAnchor(anchor, apk);
+                })
+                .catch((error) => {
+                    console.error('Error fetching data:', error);
+                })
+        );
     });
 
     // Execute all fetch requests in parallel
