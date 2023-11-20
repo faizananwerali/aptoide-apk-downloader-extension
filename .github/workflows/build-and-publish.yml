@@ -25,21 +25,21 @@ jobs:
       - id: packExtensionDir
         uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
         with:
-          extensionDir: 'build'
-          zipFilePath: 'compressed/extension.zip'
+          extensionDir: './build'
+          zipFilePath: './compressed/extension.zip'
 
       - uses: cardinalby/webext-buildtools-chrome-crx-action@v2
         with:
           # zip file made at the packExtensionDir step
-          zipFilePath: 'compressed/extension.zip'
-          crxFilePath: 'compressed/extension.crx'
+          zipFilePath: './compressed/extension.zip'
+          crxFilePath: './compressed/extension.crx'
           privateKey: ${{ secrets.CHROME_CRX_PRIVATE_KEY }}
 
       # Get version from manifest file (replace with your file name and parsing)
       - name: Get version from manifest
         id: get_version
         run: |
-          VERSION=$(grep -o '"version": *"[^"]*"' ./extension/manifest.json | grep -o '"[^"]*"$' | tr -d '"')
+          VERSION=$(grep -o '"version": *"[^"]*"' ./build/manifest.json | grep -o '"[^"]*"$' | tr -d '"')
           echo "::set-output name=version::$VERSION"
 
       # Create a release with the version from the manifest
