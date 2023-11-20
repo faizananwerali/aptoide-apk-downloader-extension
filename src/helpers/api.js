@@ -97,78 +97,27 @@ async function searchAppAlternative(pkg) {
 }
 
 /**
- * Replaces the anchor element with a download buttons.
- *
- * @param anchor
- * @param apkInfo
+ * Sample URL: https://facebook.en.aptoide.com/app
+ * @param uname
+ * @returns {Promise<Document>}
  */
-// Set anchor
-function setAnchor(anchor, apkInfo) {
-    anchor.parentElement.innerHTML = `
-        <div class="download_btn_parent">
-            <a class="download_btn" href="${apkInfo.path || ''}" download>
-                <div class="download_btn_text">Download</div>
-            </a>
-            <a class="download_btn" href="${apkInfo.altpath || ''}" download>
-                <div class="download_btn_text">Download Alt</div>
-            </a>
-        </div>
-    `;
+async function fetchHTMLPage(uname) {
+    const response = await fetch(`https://${uname}.en.aptoide.com/app`);
+    if (response.ok) {
+        const htmlString = await response.text(); // Get the HTML response as text
+        const parser = new DOMParser();
+        // Parse HTML string to a Document object
+        return parser.parseFromString(htmlString, 'text/html');
+    } else {
+        throw new Error('Network response was not ok.');
+    }
 }
 
-/**
- * Fetches data for each anchor element and replaces it with a download button.
- */
-function modifyAnchors() {
-    const anchors = document.querySelectorAll('a[href^="https://en.aptoide.com/download?app_id="]');
-    const fetchPromises = [];
-
-    anchors.forEach((anchor) => {
-        let url, appId;
-        try {
-            url = new URL(anchor.href);
-            appId = url.searchParams.get('app_id');
-        } catch (error) {
-            console.error('Error parsing URL:', error);
-            return;
-        }
-
-        if (appId === undefined || appId == null || appId === '') {
-            console.error('App ID is undefined, null or empty.');
-            return;
-        }
-
-        // Check if data is already cached
-        const cachedData = sessionStorage.getItem('aptoide-apk-downloader-extension-' + appId);
-        if (cachedData) {
-            const { apk } = JSON.parse(cachedData);
-            setAnchor(anchor, apk);
-            return;
-        }
-
-        fetchPromises.push(
-            fetchData(appId)
-                .then((responseData) => {
-                    // Cache the response
-                    sessionStorage.setItem('aptoide-apk-downloader-extension-' + appId, JSON.stringify(responseData));
-                    const { apk } = responseData;
-                    setAnchor(anchor, apk);
-                })
-                .catch((error) => {
-                    console.error('Error fetching data:', error);
-                })
-        );
-    });
-
-    // Execute all fetch requests in parallel
-    Promise.all(fetchPromises)
-        .then(() => {
-            console.log('All fetch requests completed.');
-        })
-        .catch((error) => {
-            console.error('Error in Promise.all:', error);
-        });
+export {
+    fetchData,
+    fetchDataAlternative,
+    fetchDataAlternative2,
+    searchApp,
+    searchAppAlternative,
+    fetchHTMLPage
 }
-
-// Execute the modification on page load
-modifyAnchors();

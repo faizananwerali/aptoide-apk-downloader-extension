@@ -1,0 +1,27 @@
+.download_btn_parent {
+  @apply flex gap-2.5;
+}
+
+.download_btn {
+  @apply grow;
+}
+
+.download_btn_text {
+  @apply flex justify-center items-center h-14
+  cursor-pointer not-italic font-medium uppercase
+  leading-[14px] transition-shadow duration-[0.25s]
+  ease-[ease] delay-[0s] text-white
+  w-full text-sm p-5 rounded-2xl;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  font-family: Roboto;
+  background: linear-gradient(
+          116.63deg,
+          rgb(254, 145, 80) 8.97%,
+          rgb(254, 100, 70) 92.93%
+  );
+}
+
+.download_btn_text:hover {
+  @apply shadow-[rgb(254,145,80)_0px_0px_19px];
+}

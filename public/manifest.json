@@ -1,19 +1,22 @@
 {
   "manifest_version": 3,
   "name": "Aptoide APK Downloader Extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This extension allows you to download apps from Aptoide to your PC.",
   "host_permissions": [
     "https://*.en.aptoide.com/app*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "./static/js/background.js"
   },
   "content_scripts": [
     {
-      "matches": ["https://*.en.aptoide.com/app*"],
-      "js": ["content.js"],
-      "css": ["content.css"],
+      "matches": [
+        "https://*.aptoide.com/*",
+        "https://*.en.aptoide.com/app*"
+      ],
+      "js": ["./static/js/content.js"],
+      "css": ["./static/css/content.css"],
       "run_at": "document_idle"
     }
   ],
@@ -26,6 +29,6 @@
     "180": "icons/normal_180.png"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "index.html"
   }
 }
