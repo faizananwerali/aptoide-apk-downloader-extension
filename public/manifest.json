@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Aptoide APK Downloader Extension",
-  "version": "1.0.1",
-  "description": "This extension allows you to download apps from Aptoide to your PC.",
+  "version": "1.0.2",
+  "description": "Download APK directly from Aptoide.com to PC/Laptop.",
   "host_permissions": [
     "https://*.en.aptoide.com/app*"
   ],
