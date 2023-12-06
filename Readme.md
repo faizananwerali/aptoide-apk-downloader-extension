@@ -6,7 +6,7 @@ Download APK directly from Aptoide.com to PC/Laptop.
 
 ## Usage
 
-To use this extension, you need to install it from [Chrome Web Store](https://chrome.google.com/webstore/detail/aptoide-apk-downloader/ldgfbffjgjgjgjgjgjgjgjgjgjgjgjg).
+To use this extension, you need to install it from [Chrome Web Store](https://chromewebstore.google.com/detail/aptoide-chrome-extension/jhghkkgmplgbifchnfkighggbbadppgl?hl=en).
 
 There are two ways to download APK from Aptoide.com using this extension.
 
