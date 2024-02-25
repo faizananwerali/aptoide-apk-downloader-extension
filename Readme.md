@@ -1,3 +1,5 @@
+[![StandWithPalestine](https://raw.githubusercontent.com/TheBSD/StandWithPalestine/main/badges/StandWithPalestine.svg)](https://github.com/TheBSD/StandWithPalestine/blob/main/docs/README.md)
+
 # Aptoide APK Downloader Extension
 
 Download APK directly from Aptoide.com to PC/Laptop.
